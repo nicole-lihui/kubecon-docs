@@ -36,14 +36,22 @@ helm install lws oci://registry.k8s.io/lws/charts/lws \
 
 ```bash
 kubectl create ns demo-lws
+```
 
-# Download demo repository
+Download demo repository
+```bash
 git clone git@github.com:nicole-lihui/kubecon-docs.git
+```
 
-# China acceleration
+China acceleration
+```bash
 git clone https://gh-proxy.ygxz.in/https://github.com/nicole-lihui/kubecon-docs
 ```
 
+switch to default ns `demo-lws`
+```bash
+kubectl config set-context --current --namespace=demo-lws
+```
 ### Download Models
 
 1. Local download, mount to pod via host path
@@ -186,6 +194,20 @@ uninstall
 kubectl -n demo-lws delete -f "./lws/hpa/${MODEL}.yaml"
 ```
 
+watch changes
+
+```bash
+while true; \
+do echo "--------POD----------"; \
+kubectl get po; \
+echo "--------HPA----------"; \
+kubectl get hpa; \
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/demo-lws/metrics/vllm_num_requests_waiting | jq; \
+echo "============================="; \
+sleep 5; \
+done
+```
+
 ## Testing
 
 ### Install vllm Benchmark Demo
@@ -223,6 +245,11 @@ git clone https://www.modelscope.cn/datasets/otavia/ShareGPT_Vicuna_unfiltered.g
 export MODEL=deepseek-r1-distill-qwen-1-5b
 export DATASET_PATH=/vllm-workspace/ShareGPT_Vicuna_unfiltered/ShareGPT_V3_unfiltered_cleaned_split.json
 
+CONCY=150
+N_P=1000
+```
+
+```bash
 python3 /vllm-workspace/benchmarks/benchmark_serving.py \
   --backend vllm \
   --model /data/serving-model \
@@ -231,11 +258,11 @@ python3 /vllm-workspace/benchmarks/benchmark_serving.py \
   --port 8000 \
   --dataset-name random \
   --random-input 1024 \
-  --random-output 512 \
+  --random-output 514 \
   --random-range-ratio 0.8 \
   --dataset-path "$DATASET_PATH" \
-  --max-concurrency 300 \
-  --num-prompts 64
+  --max-concurrency $CONCY \
+  --num-prompts $N_P
 ```
 
 ## PD Separation Demo

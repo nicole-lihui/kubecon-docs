@@ -21,17 +21,17 @@ spec:
           name: demo-lws
         target:
           type: Value
-          value: 50
+          value: 20
   behavior: # only for demo
     scaleDown:
       stabilizationWindowSeconds: 0  # disable scale down cooling
       policies:
       - type: Pods
         value: 1   # allow one scale down all extra replicas
-        periodSeconds: 30  # evaluate scale down every 30 seconds
+        periodSeconds: 10  # evaluate scale down every 30 seconds
     scaleUp:
       stabilizationWindowSeconds: 0  # disable scale up cooling
       policies:
       - type: Pods
-        value: 1   # allow one scale up to max value
-        periodSeconds: 15  # evaluate scale up every 15 seconds
+        value: 2   # allow one scale up to max value
+        periodSeconds: 10  # evaluate scale up every 15 seconds

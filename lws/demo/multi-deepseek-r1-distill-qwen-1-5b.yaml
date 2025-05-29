@@ -38,9 +38,13 @@ spec:
               periodSeconds: 10
             resources:
               limits:
-                nvidia.com/gpu: "1"
+                cpu: '4'
+                memory: 16Gi
+                nvidia.com/gpu: '1'
               requests:
-                nvidia.com/gpu: "1"
+                cpu: '2'
+                memory: 4Gi
+                nvidia.com/gpu: '1'
             volumeMounts:
               - mountPath: /dev/shm
                 name: dshm
@@ -70,9 +74,13 @@ spec:
                 --ray_address=$(LWS_LEADER_ADDRESS)
             resources:
               limits:
-                nvidia.com/gpu: "1"
+                cpu: '4'
+                memory: 16Gi
+                nvidia.com/gpu: '1'
               requests:
-                nvidia.com/gpu: "1"
+                cpu: '2'
+                memory: 4Gi
+                nvidia.com/gpu: '1'
             volumeMounts:
               - mountPath: /dev/shm
                 name: dshm
