@@ -5,6 +5,7 @@
     - [安装 LWS](#安装-lws)
     - [k8s 环境](#k8s-环境)
     - [下载模型](#下载模型)
+  - [模型选择](#模型选择)
   - [LWS 多机推理 demo](#lws-多机推理-demo)
   - [HPA](#hpa)
     - [前置准备](#前置准备-1)
@@ -14,8 +15,9 @@
     - [安装 vllm benchmark demo](#安装-vllm-benchmark-demo)
   - [PD 分离 Demo](#pd-分离-demo)
     - [安装 LMCache](#安装-lmcache)
-    - [同构 PD 分离 demo](#同构-pd-分离-demo)
+    - [加载 pd proxy 脚本](#加载-pd-proxy-脚本)
     - [异构 PD 分离 demo](#异构-pd-分离-demo)
+    - [同构 PD 分离 demo](#同构-pd-分离-demo)
 
 ## 前置准备
 
@@ -63,26 +65,71 @@ modelscope download --model deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
 kubectl -n demo-lws apply -f ./lws/datasets/deepseek-r1-distill-qwen-32b.yaml
 ```
 
-## LWS 多机推理 demo
+## 模型选择
 
-```bash
-# install
+```
 MODEL=deepseek-r1-distill-qwen-1-5b
-kubectl -n demo-lws apply -f "./lws/demo/multi-${MODEL}.yaml"
-
-# uninstall
-
-MODEL=deepseek-r1-distill-qwen-1-5b
-kubectl -n demo-lws delete -f "./lws/demo/multi-${MODEL}.yaml"
 ```
 
+## LWS 多机推理 demo
+
+[/vllm-workspace/examples/online_serving/multi-node-serving.sh](https://github.com/vllm-project/vllm/blob/main/examples/online_serving/multi-node-serving.sh) 是 vllm 官方多机推理示例：
+
+主要是通 ray 进行多机推理，当前脚本增加工作集群加入等待逻辑和参数检测。
+
+**leader 运行命令**
+
+```yaml
+- name: vllm-leader
+  image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
+  command:
+    - sh
+    - -c
+  args:
+    - |
+      bash /vllm-workspace/examples/online_serving/multi-node-serving.sh leader \
+      --ray_cluster_size=$(LWS_GROUP_SIZE); \
+      python3 -m vllm.entrypoints.openai.api_server --port 8000 \
+      --model /data/serving-model \
+      --served-model-name  deepseek-r1-distill-qwen-1-5b \
+      --tensor-parallel-size 2 \
+      --pipeline_parallel_size 1
+```
+
+**worker 运行**
+
+```yaml
+- name: vllm-worker
+  image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
+  command:
+    - sh
+    - -c
+  args:
+    - |
+      bash /vllm-workspace/examples/online_serving/multi-node-serving.sh worker \
+      --ray_address=$(LWS_LEADER_ADDRESS)
+```
+
+````bash
+# install
+kubectl -n demo-lws apply -f "./lws/demo/multi-${MODEL}.yaml"
+```
+
+uninstall
+
+```bash
+kubectl -n demo-lws delete -f "./lws/demo/multi-${MODEL}.yaml"
+````
+
 ## HPA
+
 ### 前置准备
 
 安装 prometheus 和 prometheus-adapter
 可以参考 [vllm-project/production-stack](https://github.com/vllm-project/production-stack/blob/main/observability/README.md)
 
 prometheus-adapter rules 自定义 hpa 指标
+
 ```yaml
 rules:
   custom:
@@ -130,12 +177,19 @@ EOF
 ### 创建 HorizontalPodAutoscaler
 
 ```bash
-MODEL=deepseek-r1-distill-qwen-1-5b
 kubectl -n demo-lws apply -f "./lws/hpa/${MODEL}.yaml"
 ```
 
+uninstall
+
+```
+kubectl -n demo-lws delete -f "./lws/hpa/${MODEL}.yaml"
+```
+
 ## 检测
+
 ### 安装 vllm benchmark demo
+
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/vllm-benchmark.yaml
 
@@ -147,6 +201,7 @@ vllm benchmark 容器中执行
 
 ```bash
 MODEL=deepseek-r1-distill-qwen-1-5b
+
 PORT=8000
 BASE_URL="http://${MODEL}:${PORT}"
 
@@ -183,34 +238,69 @@ python3 /vllm-workspace/benchmarks/benchmark_serving.py \
   --num-prompts 64
 ```
 
-
 ## PD 分离 Demo
 
 ### 安装 LMCache
+
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-lmcacheserve.yaml
 ```
 
-### 同构 PD 分离 demo
+### 加载 pd proxy 脚本
+
+PD 分离需要有一个核心 router 进行 pd 的路由，因此这里采用 vllm example 的 python 脚本进行 demo
+[disagg_proxy_server.py](https://github.com/vllm-project/vllm/blob/main/examples/others/lmcache/disagg_prefill_lmcache_v1/disagg_proxy_server.py)
+
+暂时通过 configmap 方式挂载脚本，只做 demo
+
 ```bash
-kubectl -n demo-lws apply -f ./lws/demo/pd-kvboth-deepseek-r1-distill-qwen-14b.yaml
+kubectl -n demo-lws apply -f ./lws/demo/pd-disagg-proxy-server.yaml
 ```
 
-uninstall
 ```bash
-kubectl -n demo-lws delete -f ./lws/demo/pd-kvboth-deepseek-r1-distill-qwen-14b.yaml
+kubectl -n demo-lws delete -f ./lws/demo/pd-disagg-proxy-server.yaml
 ```
 
 ### 异构 PD 分离 demo
+
 ```bash
-kubectl -n demo-lws apply -f ./lws/demo/pd-kvdiff-deepseek-r1-distill-qwen-14b.yaml
+kubectl -n demo-lws apply -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
 ```
 
 uninstall
 
 ```bash
-kubectl -n demo-lws delete -f ./lws/demo/pd-kvdiff-deepseek-r1-distill-qwen-14b.yaml
+kubectl -n demo-lws delete -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
 ```
 
+检测
 
+```bash
+MODEL=pd-diff-deepseek-r1-distill-qwen-1-5b
+
+PORT=8000
+BASE_URL="http://${MODEL}:${PORT}"
+
+curl --location "${BASE_URL}/v1/completions" \
+  --header 'Content-Type: application/json' \
+  --data "$(cat <<EOF
+{
+  "model": "${MODEL}",
+  "prompt": "hi, what is vllm ?"
+}
+EOF
+)"
+```
+
+### 同构 PD 分离 demo
+
+```bash
+kubectl -n demo-lws apply -f ./lws/demo/pd-kvboth-${MODEL}.yaml
+```
+
+uninstall
+
+```bash
+kubectl -n demo-lws delete -f ./lws/demo/pd-kvboth-${MODEL}.yaml
+```
 
