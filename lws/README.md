@@ -118,8 +118,9 @@ Mainly uses ray for multi-machine inference, the current script adds worker clus
       --ray_address=$(LWS_LEADER_ADDRESS)
 ```
 
+install
+
 ```bash
-# install
 kubectl -n demo-lws apply -f "./lws/demo/multi-${MODEL}.yaml"
 ```
 
@@ -271,6 +272,12 @@ python3 /vllm-workspace/benchmarks/benchmark_serving.py \
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-lmcacheserve.yaml
+```
+
+uninstall
+
+```bash
+kubectl -n demo-lws delete -f ./lws/demo/pd-lmcacheserve.yaml
 ```
 
 ### Load PD Proxy Script
