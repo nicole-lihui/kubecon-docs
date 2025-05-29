@@ -16,7 +16,7 @@ spec:
   leaderWorkerTemplate:
     size: 5
     subGroupPolicy:
-      #subGroupPolicyType: LeaderWorker  # 或 LeaderExcluded
+      #subGroupPolicyType: LeaderWorker  # or LeaderExcluded
       subGroupSize: 2
     restartPolicy: RecreateGroupOnPodRestart
     leaderTemplate:
@@ -178,7 +178,7 @@ metadata:
   name: pd-diff-deepseek-r1-distill-qwen-1-5b
 spec:
   selector:
-    leaderworkerset.sigs.k8s.io/name: pd-diff-deepseek-r1-distill-qwen-1-5b # lws 模型的关联名称
+    leaderworkerset.sigs.k8s.io/name: pd-diff-deepseek-r1-distill-qwen-1-5b
     role: leader
   ports:
     - name: http

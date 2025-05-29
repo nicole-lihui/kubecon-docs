@@ -21,4 +21,4 @@ spec:
           name: demo-lws
         target:
           type: Value
-          value: 3
+          value: 50

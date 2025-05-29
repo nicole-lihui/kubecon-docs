@@ -9,7 +9,7 @@ spec:
     kind: LeaderWorkerSet
     name: deepseek-r1-distill-qwen-1-5b
   minReplicas: 1
-  maxReplicas: 4
+  maxReplicas: 5
   metrics:
     - type: Object
       object:
@@ -21,4 +21,17 @@ spec:
           name: demo-lws
         target:
           type: Value
-          value: 4
+          value: 50
+  behavior: # only for demo
+    scaleDown:
+      stabilizationWindowSeconds: 0  # disable scale down cooling
+      policies:
+      - type: Pods
+        value: 1   # allow one scale down all extra replicas
+        periodSeconds: 30  # evaluate scale down every 30 seconds
+    scaleUp:
+      stabilizationWindowSeconds: 0  # disable scale up cooling
+      policies:
+      - type: Pods
+        value: 1   # allow one scale up to max value
+        periodSeconds: 15  # evaluate scale up every 15 seconds

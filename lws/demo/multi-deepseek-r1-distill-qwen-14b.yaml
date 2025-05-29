@@ -4,7 +4,7 @@ metadata:
   name: deepseek-r1-distill-qwen-14b
 spec:
   networkConfig:
-    subdomainPolicy: UniquePerReplica # 默认是 Shared， UniquePerReplica 可以为每个 POD 配置独立的无头 service，我们可以自己定义 唯一的入口 Service
+    subdomainPolicy: UniquePerReplica
   replicas: 1
   leaderWorkerTemplate:
     size: 2
@@ -95,11 +95,11 @@ metadata:
   name: deepseek-r1-distill-qwen-14b
   namespace: demo-lws
   labels:
-    prometheus-discovery: "true" # 开启 ServiceMonitor 采集指标
+    prometheus-discovery: "true"
 spec:
   selector:
     role: leader
-    leaderworkerset.sigs.k8s.io/name: deepseek-r1-distill-qwen-14b # lws 模型的关联名称
+    leaderworkerset.sigs.k8s.io/name: deepseek-r1-distill-qwen-14b
   ports:
     - name: vllm-service-port
       protocol: TCP

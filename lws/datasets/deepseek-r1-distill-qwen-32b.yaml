@@ -14,5 +14,5 @@ spec:
     metadata: {}
     spec:
       resources: {}
-      storageClassName: juicefs-sc-no-share-sc # 可以指定 sc
+      storageClassName: juicefs-sc-no-share-sc # specified storeageClass
     status: {}

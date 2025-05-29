@@ -1,27 +1,27 @@
 # LWS Demos
 
 - [LWS Demos](#lws-demos)
-  - [前置准备](#前置准备)
-    - [安装 LWS](#安装-lws)
-    - [k8s 环境](#k8s-环境)
-    - [下载模型](#下载模型)
-  - [模型选择](#模型选择)
-  - [LWS 多机推理 demo](#lws-多机推理-demo)
+  - [Prerequisites](#prerequisites)
+    - [Install LWS](#install-lws)
+    - [K8s Environment](#k8s-environment)
+    - [Download Models](#download-models)
+  - [Model Selection](#model-selection)
+  - [LWS Multi-Machine Inference Demo](#lws-multi-machine-inference-demo)
   - [HPA](#hpa)
-    - [前置准备](#前置准备-1)
-    - [ServiceMonitor 暴露 vllm 指标](#servicemonitor-暴露-vllm-指标)
-    - [创建 HorizontalPodAutoscaler](#创建-horizontalpodautoscaler)
-  - [检测](#检测)
-    - [安装 vllm benchmark demo](#安装-vllm-benchmark-demo)
-  - [PD 分离 Demo](#pd-分离-demo)
-    - [安装 LMCache](#安装-lmcache)
-    - [加载 pd proxy 脚本](#加载-pd-proxy-脚本)
-    - [异构 PD 分离 demo](#异构-pd-分离-demo)
-    - [同构 PD 分离 demo](#同构-pd-分离-demo)
+    - [Prerequisites](#prerequisites-1)
+    - [ServiceMonitor Exposing vllm Metrics](#servicemonitor-exposing-vllm-metrics)
+    - [Create HorizontalPodAutoscaler](#create-horizontalpodautoscaler)
+  - [Testing](#testing)
+    - [Install vllm Benchmark Demo](#install-vllm-benchmark-demo)
+  - [PD Separation Demo](#pd-separation-demo)
+    - [Install LMCache](#install-lmcache)
+    - [Load PD Proxy Script](#load-pd-proxy-script)
+    - [Heterogeneous PD Separation Demo](#heterogeneous-pd-separation-demo)
+    - [Homogeneous PD Separation Demo](#homogeneous-pd-separation-demo)
 
-## 前置准备
+## Prerequisites
 
-### 安装 LWS
+### Install LWS
 
 ```bash
 CHART_VERSION=0.6.1
@@ -32,52 +32,52 @@ helm install lws oci://registry.k8s.io/lws/charts/lws \
   --wait --timeout 300s
 ```
 
-### k8s 环境
+### K8s Environment
 
 ```bash
 kubectl create ns demo-lws
 
-# 下载demo 仓库
+# Download demo repository
 git clone git@github.com:nicole-lihui/kubecon-docs.git
 
-# 国内加速
+# China acceleration
 git clone https://gh-proxy.ygxz.in/https://github.com/nicole-lihui/kubecon-docs
 ```
 
-### 下载模型
+### Download Models
 
-1. 本地下载，通过 host path 挂载到 pod 中
+1. Local download, mount to pod via host path
 
 ```bash
 pip install modelscope
 
-# 以 DeepSeek-R1-Distill-Qwen-1.5B 为例子 https://modelscope.cn/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
+# Using DeepSeek-R1-Distill-Qwen-1.5B as an example https://modelscope.cn/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
 modelscope download --model deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
 ```
 
-当前方式在 k8s 环境中比较复杂，建议创建 pod 挂载 share pvc 方式存储
+This method is complex in k8s environment, it's recommended to create pods with shared PVC storage
 
-2. dataset 方式，通过 pod 挂载到 pvc 中（下面 demo 采用当前方案）
+2. Dataset method, mount to PVC via pod (current demo uses this approach)
 
-采用 [BaizeAI/dataset](https://github.com/BaizeAI/dataset) 项目来提前下载模型
+Using [BaizeAI/dataset](https://github.com/BaizeAI/dataset) project to pre-download models
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/datasets/deepseek-r1-distill-qwen-32b.yaml
 ```
 
-## 模型选择
+## Model Selection
 
 ```
 MODEL=deepseek-r1-distill-qwen-1-5b
 ```
 
-## LWS 多机推理 demo
+## LWS Multi-Machine Inference Demo
 
-[/vllm-workspace/examples/online_serving/multi-node-serving.sh](https://github.com/vllm-project/vllm/blob/main/examples/online_serving/multi-node-serving.sh) 是 vllm 官方多机推理示例：
+[/vllm-workspace/examples/online_serving/multi-node-serving.sh](https://github.com/vllm-project/vllm/blob/main/examples/online_serving/multi-node-serving.sh) is the official vllm multi-machine inference example:
 
-主要是通 ray 进行多机推理，当前脚本增加工作集群加入等待逻辑和参数检测。
+Mainly uses ray for multi-machine inference, the current script adds worker cluster join waiting logic and parameter detection.
 
-**leader 运行命令**
+**leader run command**
 
 ```yaml
 - name: vllm-leader
@@ -96,7 +96,7 @@ MODEL=deepseek-r1-distill-qwen-1-5b
       --pipeline_parallel_size 1
 ```
 
-**worker 运行**
+**worker run**
 
 ```yaml
 - name: vllm-worker
@@ -110,7 +110,7 @@ MODEL=deepseek-r1-distill-qwen-1-5b
       --ray_address=$(LWS_LEADER_ADDRESS)
 ```
 
-````bash
+```bash
 # install
 kubectl -n demo-lws apply -f "./lws/demo/multi-${MODEL}.yaml"
 ```
@@ -119,16 +119,16 @@ uninstall
 
 ```bash
 kubectl -n demo-lws delete -f "./lws/demo/multi-${MODEL}.yaml"
-````
+```
 
 ## HPA
 
-### 前置准备
+### Prerequisites
 
-安装 prometheus 和 prometheus-adapter
-可以参考 [vllm-project/production-stack](https://github.com/vllm-project/production-stack/blob/main/observability/README.md)
+Install prometheus and prometheus-adapter
+You can refer to [vllm-project/production-stack](https://github.com/vllm-project/production-stack/blob/main/observability/README.md)
 
-prometheus-adapter rules 自定义 hpa 指标
+prometheus-adapter rules custom hpa metrics
 
 ```yaml
 rules:
@@ -145,12 +145,12 @@ rules:
 ```
 
 ```bash
-# 检测 hpa 指标是否生效
+# Check if hpa metrics are effective
 kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1 | jq | grep vllm_num_requests_waiting -C 10
 kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/demo-lws/metrics/vllm_num_requests_waiting | jq
 ```
 
-### ServiceMonitor 暴露 vllm 指标
+### ServiceMonitor Exposing vllm Metrics
 
 ```bash
 kubectl -n demo-lws apply -f - <<EOF
@@ -174,7 +174,7 @@ spec:
 EOF
 ```
 
-### 创建 HorizontalPodAutoscaler
+### Create HorizontalPodAutoscaler
 
 ```bash
 kubectl -n demo-lws apply -f "./lws/hpa/${MODEL}.yaml"
@@ -182,22 +182,22 @@ kubectl -n demo-lws apply -f "./lws/hpa/${MODEL}.yaml"
 
 uninstall
 
-```
+```bash
 kubectl -n demo-lws delete -f "./lws/hpa/${MODEL}.yaml"
 ```
 
-## 检测
+## Testing
 
-### 安装 vllm benchmark demo
+### Install vllm Benchmark Demo
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/vllm-benchmark.yaml
 
-# 进入容器
+# Enter container
 kubectl -n demo-lws exec -it $(kubectl -n demo-lws get pod -l app=vllm-benchmark -o jsonpath='{.items[0].metadata.name}') bash
 ```
 
-vllm benchmark 容器中执行
+Execute in vllm benchmark container
 
 ```bash
 MODEL=deepseek-r1-distill-qwen-1-5b
@@ -217,7 +217,7 @@ EOF
 ```
 
 ```bash
-# 下载测试数据集
+# Download test dataset
 git clone https://www.modelscope.cn/datasets/otavia/ShareGPT_Vicuna_unfiltered.git
 
 export MODEL=deepseek-r1-distill-qwen-1-5b
@@ -238,20 +238,20 @@ python3 /vllm-workspace/benchmarks/benchmark_serving.py \
   --num-prompts 64
 ```
 
-## PD 分离 Demo
+## PD Separation Demo
 
-### 安装 LMCache
+### Install LMCache
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-lmcacheserve.yaml
 ```
 
-### 加载 pd proxy 脚本
+### Load PD Proxy Script
 
-PD 分离需要有一个核心 router 进行 pd 的路由，因此这里采用 vllm example 的 python 脚本进行 demo
+PD separation requires a core router for PD routing, so we use vllm example's python script for demo
 [disagg_proxy_server.py](https://github.com/vllm-project/vllm/blob/main/examples/others/lmcache/disagg_prefill_lmcache_v1/disagg_proxy_server.py)
 
-暂时通过 configmap 方式挂载脚本，只做 demo
+Temporarily mount script via configmap, only for demo
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-disagg-proxy-server.yaml
@@ -261,7 +261,7 @@ kubectl -n demo-lws apply -f ./lws/demo/pd-disagg-proxy-server.yaml
 kubectl -n demo-lws delete -f ./lws/demo/pd-disagg-proxy-server.yaml
 ```
 
-### 异构 PD 分离 demo
+### Heterogeneous PD Separation Demo
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
@@ -273,7 +273,7 @@ uninstall
 kubectl -n demo-lws delete -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
 ```
 
-检测
+Testing
 
 ```bash
 MODEL=pd-diff-deepseek-r1-distill-qwen-1-5b
@@ -292,7 +292,7 @@ EOF
 )"
 ```
 
-### 同构 PD 分离 demo
+### Homogeneous PD Separation Demo
 
 ```bash
 kubectl -n demo-lws apply -f ./lws/demo/pd-kvboth-${MODEL}.yaml
@@ -303,4 +303,3 @@ uninstall
 ```bash
 kubectl -n demo-lws delete -f ./lws/demo/pd-kvboth-${MODEL}.yaml
 ```
-
