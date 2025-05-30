@@ -335,7 +335,7 @@ kubectl -n demo-lws apply -f ./lws/demo/pd-kvboth-${MODEL}.yaml
 
 
 ```bash
-SVC=pd-kvboth-${MODEL}
+SVC=pd-both-${MODEL}
 PORT=8000
 BASE_URL="http://${SVC}:${PORT}"
 
