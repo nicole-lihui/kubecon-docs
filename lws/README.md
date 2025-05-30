@@ -280,7 +280,7 @@ uninstall
 kubectl -n demo-lws delete -f ./lws/demo/pd-lmcacheserve.yaml
 ```
 
-### Load PD Proxy Script
+### Prepare PD Proxy Script
 
 PD separation requires a core router for PD routing, so we use vllm example's python script for demo
 [disagg_proxy_server.py](https://github.com/vllm-project/vllm/blob/main/examples/others/lmcache/disagg_prefill_lmcache_v1/disagg_proxy_server.py)
@@ -295,9 +295,10 @@ kubectl -n demo-lws apply -f ./lws/demo/pd-disagg-proxy-server.yaml
 kubectl -n demo-lws delete -f ./lws/demo/pd-disagg-proxy-server.yaml
 ```
 
-### Heterogeneous PD Separation Demo
+### Option 1: Heterogeneous PD Separation Demo
 
 ```bash
+export  MODEL=deepseek-r1-distill-qwen-1-5b
 kubectl -n demo-lws apply -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
 ```
 
@@ -310,30 +311,41 @@ kubectl -n demo-lws delete -f ./lws/demo/pd-kvdiff-${MODEL}.yaml
 Testing
 
 ```bash
-MODEL=pd-diff-deepseek-r1-distill-qwen-1-5b
-
+SVC=pd-diff-${MODEL}
 PORT=8000
-BASE_URL="http://${MODEL}:${PORT}"
+BASE_URL="http://${SVC}:${PORT}"
 
 curl --location "${BASE_URL}/v1/completions" \
   --header 'Content-Type: application/json' \
   --data "$(cat <<EOF
 {
   "model": "${MODEL}",
-  "prompt": "hi, what is vllm ?"
+  "prompt": "hi, what is LeaderWorkerSet?"
 }
 EOF
 )"
 ```
 
-### Homogeneous PD Separation Demo
+### Option 2: Homogeneous PD Separation Demo
 
 ```bash
+export  MODEL=deepseek-r1-distill-qwen-1-5b
 kubectl -n demo-lws apply -f ./lws/demo/pd-kvboth-${MODEL}.yaml
 ```
 
-uninstall
 
 ```bash
-kubectl -n demo-lws delete -f ./lws/demo/pd-kvboth-${MODEL}.yaml
+SVC=pd-kvboth-${MODEL}
+PORT=8000
+BASE_URL="http://${SVC}:${PORT}"
+
+curl --location "${BASE_URL}/v1/completions" \
+  --header 'Content-Type: application/json' \
+  --data "$(cat <<EOF
+{
+  "model": "${MODEL}",
+  "prompt": "hi, How do you think about LWS(LeaderWorkerSet)?"
+}
+EOF
+)"
 ```
