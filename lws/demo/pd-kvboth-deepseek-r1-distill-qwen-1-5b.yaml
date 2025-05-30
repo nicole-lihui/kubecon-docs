@@ -16,7 +16,7 @@ spec:
   leaderWorkerTemplate:
     size: 5
     subGroupPolicy:
-      #subGroupPolicyType: LeaderWorker  # or LeaderExcluded
+      subGroupPolicyType:  LeaderExcluded #LeaderWorker  
       subGroupSize: 2
     restartPolicy: RecreateGroupOnPodRestart
     leaderTemplate:
