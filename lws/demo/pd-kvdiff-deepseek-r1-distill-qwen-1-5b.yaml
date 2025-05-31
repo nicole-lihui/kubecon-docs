@@ -72,9 +72,9 @@ spec:
       spec:
         containers:
           - image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
-            args: # 第一组为 prefill，第二组为 decode
+            args: # Even sub-group as prefill，Odd sub-group as decode
               - |
-                if [ "$SUB_GROUP_KEY" = "0" ]; then
+                if [[ $(($SUB_GROUP_KEY%2)) = 0 ]]; then
                   kv_role=kv_producer
                 else
                   kv_role=kv_consumer
