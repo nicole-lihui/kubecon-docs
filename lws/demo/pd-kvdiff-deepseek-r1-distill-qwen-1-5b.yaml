@@ -16,7 +16,7 @@ spec:
   leaderWorkerTemplate:
     size: 5
     subGroupPolicy:
-      #subGroupPolicyType: LeaderWorker  # or LeaderExcluded
+      subGroupPolicyType: LeaderExcluded #or LeaderWorker
       subGroupSize: 2
     restartPolicy: RecreateGroupOnPodRestart
     leaderTemplate:
@@ -74,7 +74,7 @@ spec:
           - image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
             args: # Even sub-group as prefill，Odd sub-group as decode
               - |
-                if [[ $(($SUB_GROUP_KEY%2)) = 0 ]]; then
+                if [[ $(($SUB_GROUP_ID%2)) = 0 ]]; then
                   kv_role=kv_producer
                 else
                   kv_role=kv_consumer
@@ -88,7 +88,7 @@ spec:
               - /bin/bash
               - -c
             env:
-              - name: SUB_GROUP_KEY
+              - name: SUB_GROUP_ID
                 valueFrom:
                   fieldRef:
                     fieldPath: metadata.labels['leaderworkerset.sigs.k8s.io/subgroup-index']
