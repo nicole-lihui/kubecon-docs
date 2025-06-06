@@ -76,7 +76,7 @@ spec:
               - |
                 vllm serve /data/serving-model --host 0.0.0.0 --port "8000" \
                 --max-model-len 4096 \
-                --served-model-name pd-both-deepseek-r1-distill-qwen-1-5b  \
+                --served-model-name deepseek-r1-distill-qwen-1-5b  \
                 --kv-transfer-config '{"kv_connector":"LMCacheConnectorV1","kv_role":"kv_both"}'
             command:
               - /bin/bash
