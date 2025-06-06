@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: deepseek-r1-distill-qwen-32b
+  namespace: demo-lws
+spec:
+  scaleTargetRef:
+    apiVersion: leaderworkerset.x-k8s.io/v1
+    kind: LeaderWorkerSet
+    name: deepseek-r1-distill-qwen-32b
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Object
+      object:
+        metric:
+          name: vllm_num_requests_waiting
+        describedObject:
+          apiVersion: v1
+          kind: Namespace
+          name: demo-lws
+        target:
+          type: Value
+          value: 50

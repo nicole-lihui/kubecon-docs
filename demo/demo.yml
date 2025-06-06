@@ -1,0 +1,305 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /private/tmp/kubecon-docs/lws/demo
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 272
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 62
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Terminalizer
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 116
+    content: "\r\n Quick Demo of LWS with Separated P/D (Disaggregated Serving) \r\n"
+  - delay: 324
+    content: "# \e[32m================= create LWS instance and lmcache \e[0m\r\n"
+  - delay: 224
+    content: "\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m kubectl -n demo-lws apply -f  pd-lmcacheserve.yaml\r\n"
+  - delay: 228
+    content: "\r\n"
+  - delay: 205
+    content: "deployment.apps/lmcache-server created\r\n"
+  - delay: 135
+    content: "service/lmcache-server created\r\n"
+  - delay: 5
+    content: "\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m" # \e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m \r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 135
+    content: "kubectl -n demo-lws apply -f pd-kvdiff-deepseek-r1-distill-qwen-1-5b.yaml\r\n"
+  - delay: 238
+    content: "\r\n"
+  - delay: 305
+    content: "leaderworkerset.leaderworkerset.x-k8s.io/pd-diff-deepseek-r1-distill-qwen-1-5b created\r\n"
+  - delay: 133
+    content: "service/pd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-0 created\r\n"
+  - delay: 117
+    content: "service/pd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-1 created\r\n"
+  - delay: 119
+    content: "service/pd-diff-deepseek-r1-distill-qwen-1-5b created\r\n"
+  - delay: 5
+    content: "\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m" #\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m \r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 590
+    content: "kubectl -n demo-lws get po \r\n"
+  - delay: 153
+    content: "\r\n"
+  - delay: 147
+    content: "NAME                                        READY   STATUS              RESTARTS   AGE\r\nlmcache-server-968b9667-q6djq               1/1     Running             0          8s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0     0/1     ContainerCreating   0          4s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-1   0/1     ContainerCreating   0          4s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-2   0/1     ContainerCreating   0          4s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-3   0/1     ContainerCreating   0          4s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-4   0/1     ContainerCreating   0          4s\r\nvllm-benchmark-666bf596b5-zv2mn             1/1     Running             0          6d17h\r\n"
+  - delay: 10
+    content: "\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m" #\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m \r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 359
+    content: 'kubectl -n demo-lws get po '
+  - delay: 714
+    content: "\r\n"
+  - delay: 398
+    content: "NAME                                        READY   STATUS    RESTARTS   AGE\r\nlmcache-server-968b9667-q6djq               1/1     Running   0          14s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0     1/1     Running   0          10s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-1   1/1     Running   0          10s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-2   1/1     Running   0          10s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-3   1/1     Running   0          10s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-4   1/1     Running   0          10s\r\nvllm-benchmark-666bf596b5-zv2mn             1/1     Running   0          6d17h\r\n"
+  - delay: 1243
+    content: "\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m\r\n"
+  - delay: 194
+    content: c
+  - delay: 19
+    content: l
+  - delay: 5
+    content: e
+  - delay: 4
+    content: a
+  - delay: 6
+    content: r
+  - delay: 162
+    content: "\e[3J\e[H\e[2J\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m\r\n "
+  - delay: 220
+    content: "#\e[32m ==================== show LWS  Subgroups \e[0m\r\n" 
+  - delay: 220
+    content: "# \e[32m show subgroup 0 pods \e[0m \r\n" 
+  - delay: 220
+    content: "kubectl -n demo-lws get po -l leaderworkerset.sigs.k8s.io/subgroup-index=0\r\n"
+  - delay: 427
+    content: "NAME                                        READY   STATUS    RESTARTS   AGE\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-1   1/1     Running   0          18s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-2   1/1     Running   0          18s\r\n"
+  - delay: 520
+    content: "#\e[32m show subgroup 1 pods \e[0m\r\n" 
+  - delay: 501
+    content: "kubectl -n demo-lws get po -l leaderworkerset.sigs.k8s.io/subgroup-index=1\r\n"
+  - delay: 684
+    content: "NAME                                        READY   STATUS    RESTARTS   AGE\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-3   1/1     Running   0          21s\r\npd-diff-deepseek-r1-distill-qwen-1-5b-0-4   1/1     Running   0          21s\r\n"
+  - delay: 588
+    content: "#\e[32m show the svc for each subgroup \e[0m\r\n"
+  - delay: 588
+    content: "kubectl -n demo-lws get svc |grep subgroup\r\n"
+  - delay: 738
+    content: "pd-diff-deepseek-r1-distill-qwen-1-5b-\e[01;31m\e[Ksubgroup\e[m\e[K-0   ClusterIP   10.233.3.133   <none>        8000/TCP   71m\r\npd-diff-deepseek-r1-distill-qwen-1-5b-\e[01;31m\e[Ksubgroup\e[m\e[K-1   ClusterIP   10.233.24.46   <none>        8000/TCP   71m\r\n"
+  - delay: 574
+    content: kubectl -n demo-lws get svc |grep subgroup
+  - delay: 166
+    content: "\b\b\b\b\b\b\b\b\e[K"
+  - delay: 154
+    content: "\b\b\b\b\b\b\e[K"
+  - delay: 176
+    content: "\b\b\b\b\e[K"
+  - delay: 59
+    content: e
+  - delay: 35
+    content: p
+  - delay: 63
+    content: ' '
+  - delay: 148
+    content: pd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-0
+  - delay: 161
+    content: "\r\n"
+  - delay: 652
+    content: "NAME                                               ENDPOINTS                            AGE\r\npd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-0   172.65.1.70:8000,172.65.5.147:8000   71m\r\n"
+  - delay: 408
+    content: >-
+      kubectl -n demo-lws get ep
+      pd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-0
+  - delay: 327
+    content: "\b\e[K"
+  - delay: 118
+    content: '1'
+  - delay: 232
+    content: "\r\n"
+  - delay: 697
+    content: "NAME                                               ENDPOINTS                            AGE\r\npd-diff-deepseek-r1-distill-qwen-1-5b-subgroup-1   172.65.1.43:8000,172.65.4.228:8000   71m\r\n"
+  - delay: 1510
+    content: "\e[3J\e[H\e[2J\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 532
+    content: "#\e[32m========= show the remote cache store and connected by the vllm pods \e[0m\r\n"
+  - delay: 532
+    content: "kubectl -n demo-lws logs -f deploy/lmcache-server\r\n"
+  - delay: 97
+    content: "\e[32;20m[2025-06-06 00:18:19,739] LMCache INFO:\e[0m Initializing cpu-only cache server \e[3m(__init__.py:14:lmcache.experimental.server.storage_backend)\e[0m\r\nServer started at 0.0.0.0:8100\r\nConnected by ('172.65.4.228', 47192)\r\nConnected by ('172.65.5.147', 50972)\r\nConnected by ('172.65.1.43', 54388)\r\nConnected by ('172.65.1.70', 33192)\r\n"
+  - delay: 1255
+    content: ^C
+  - delay: 9
+    content: '\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m '
+  - delay: 155
+    content: "kubectl -n demo-lws logs -f pd-diff-deepseek-r1-distill-qwen-1-5b-0-1|grep \"LMCache INFO\"\r\n"
+  - delay: 37
+    content: "\r\n"
+  - delay: 32
+    content: "\e[32;20m[2025-06-06 00:19:26,713] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine instance vllm-instance \e[3m(cache_engine.py:422:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m[2025-06-06 00:19:32,180] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine with config: LMCacheEngineConfig(chunk_size=256, local_cpu=False, max_local_cpu_size=5.0, local_disk=None, max_local_disk_size=0.0, remote_url='lm://lmcache-server:8100', remote_serde='naive', save_decode_cache=False, enable_blending=False, blend_recompute_ratio=0.15, blend_min_tokens=256, enable_p2p=False, lookup_url=None, distributed_url=None, error_handling=False, enable_controller=False, lmcache_instance_id='lmcache_default_instance', enable_nixl=False, nixl_role=None, nixl_peer_host=None, nixl_peer_port=0, nixl_buffer_size=0, nixl_buffer_device=None, nixl_enable_gc=False) \e[3m(cache_engine.py:73:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m[2025-06-06 00:19:32,183] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Connected to remote storage at lm://lmcache-server:8100 \e[3m(remote_backend.py:52:lmcache.experimental.storage_backend.remote_backend)\e[0m\r\n\e[32;20m[2025-06-06 00:19:32,184] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Initializing usage context. \e[3m(usage_context.py:235:lmcache.usage_context)\e[0m\r\n"
+  - delay: 2869
+    content: ^C
+  - delay: 7
+    content: "\e[3J\e[H\e[2J\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 1138
+    content: "\e[32m============= Now talk to the LLM \e[0m\r\n"
+  - delay: 438
+    content: "kubectl -n demo-lws exec -it deploy/vllm-benchmark  -- bash\r\n"
+  - delay: 425
+    content: "\e[?2004h\e]0;root@vllm-benchmark-666bf596b5-zv2mn: /vllm-workspace\aroot@vllm-benchmark-666bf596b5-zv2mn:/vllm-workspace# "
+  - delay: 6
+    content: "\r\e[K\e]0;root@vllm-benchmark-666bf596b5-zv2mn: /vllm-workspace\aroot@vllm-benchmark-666bf596b5-zv2mn:/vllm-workspace# "
+  - delay: 1571
+    content: "\e[7mMODEL=deepseek-r1-distill-qwen-1-5b\e[27m\r\n\r\e[7mSVC=pd-diff-${MODEL}\e[27m\r\n\r\e[7mPORT=8000\e[27m\r\n\r\e[7mBASE_URL=\"http://${SVC}:${PORT}\"\e[27m\r\n\r\n\r\e[7mcurl --location \"${BASE_URL}/v1/completions\" \\\e[27m\r\n\r\e[7m  --header 'Content-Type: application/json' \\\e[27m\r\n\r\e[7m  --data \"$(cat <<EOF\e[27m\r\n\r\e[7m{\e[27m\r\n\r\e[7m  \"model\": \"${MODEL}\",\e[27m\r\n\r\e[7m  \"prompt\": \"hi, what is LeaderWorkerSet?\"\e[27m\r\n\r\e[7m}\e[27m\r\n\r\e[7mEOF\e[27m\r\n\r\e[7m)\"\e[27m"
+  - delay: 611
+    content: "\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[Aot@vllm-benchmark-666bf596b5-zv2mn:/vllm-workspace# MODEL=deepseek-r1-distill-qwen-1-5b\r\n\rSVC=pd-diff-${MODEL}\r\n\rPORT=8000\r\n\rBASE_URL=\"http://${SVC}:${PORT}\"\r\n\r\n\rcurl --location \"${BASE_URL}/v1/completions\" \\\r\n\r  --header 'Content-Type: application/json' \\\r\n\r  --data \"$(cat <<EOF\r\n\r{\r\n\r  \"model\": \"${MODEL}\",\r\n\r  \"prompt\": \"hi, what is LeaderWorkerSet?\"\r\n\r}\r\n\rEOF\r\n\r)\"\r\n\e[?2004l\r"
+  - delay: 470
+    content: "{\"id\":\"cmpl-739f2be8ce114dcdbc350f8613152516\",\"object\":\"text_completion\",\"created\":1749194510,\"model\":\"deepseek-r1-distill-qwen-1-5b\",\"choices\":[{\"index\":0,\"text\":\" Hi, what is LeaderWorkerSet?\\n\\nAlright, so I'm trying to figure\",\"logprobs\":null,\"finish_reason\":\"length\",\"stop_reason\":null,\"prompt_logprobs\":null}],\"usage\":{\"prompt_tokens\":9,\"total_tokens\":25,\"completion_tokens\":16,\"prompt_tokens_details\":null}}\e[?2004h\e]0;root@vllm-benchmark-666bf596b5-zv2mn: /vllm-workspace\aroot@vllm-benchmark-666bf596b5-zv2mn:/vllm-workspace# \e[K"
+  - delay: 2906
+    content: "\e[3J\e[H\e[2J\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m\r\n"
+  - delay: 7
+    content: '# \e[32m ======== show the lmcache log: store data means Prefill saving cache, get data means Decode geting cache \e[0m'
+  - delay: 223
+    content: "\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 378
+    content: "kubectl -n demo-lws logs -f deploy/lmcache-server\r\n"
+  - delay: 823
+    content: "\e[32;20m[2025-06-06 00:18:19,739] LMCache INFO:\e[0m Initializing cpu-only cache server \e[3m(__init__.py:14:lmcache.experimental.server.storage_backend)\e[0m\r\nServer started at 0.0.0.0:8100\r\nConnected by ('172.65.4.228', 47192)\r\nConnected by ('172.65.5.147', 50972)\r\nConnected by ('172.65.1.43', 54388)\r\nConnected by ('172.65.1.70', 33192)\r\nTime to receive data: 0.0006339428946375847, time to store data: 1.861434429883957e-05\r\nTime to get data: 1.6937963664531708e-05, time to send meta: 3.0052848160266876e-05, time to send data: 0.0005925958976149559\r\n"
+  - delay: 3205
+    content: ^C
+  - delay: 2523
+    content: "\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 175
+    content: "kubectl -n demo-lws logs -f pd-diff-deepseek-r1-distill-qwen-1-5b-0-1|grep \"LMCache INFO\"\r\n"
+  - delay: 698
+    content: "\e[32;20m \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine instance vllm-instance \e[3m(cache_engine.py:422:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m[2025-06-06 00:19:32,180] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine with config: LMCacheEngineConfig(chunk_size=256, local_cpu=False, max_local_cpu_size=5.0, local_disk=None, max_local_disk_size=0.0, remote_url='lm://lmcache-server:8100', remote_serde='naive', save_decode_cache=False, enable_blending=False, blend_recompute_ratio=0.15, blend_min_tokens=256, enable_p2p=False, lookup_url=None, distributed_url=None, error_handling=False, enable_controller=False, lmcache_instance_id='lmcache_default_instance', enable_nixl=False, nixl_role=None, nixl_peer_host=None, nixl_peer_port=0, nixl_buffer_size=0, nixl_buffer_device=None, nixl_enable_gc=False) \e[3m(cache_engine.py:73:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Connected to remote storage at lm://lmcache-server:8100 \e[3m(remote_backend.py:52:lmcache.experimental.storage_backend.remote_backend)\e[0m\r\n\e[32;20m[2025-06-06 00:19:32,184] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Initializing usage context. \e[3m(usage_context.py:235:lmcache.usage_context)\e[0m\r\n"
+  - delay: 1326
+    content: ^C
+  - delay: 140
+    content: "\r\n#\e[32m========  no log from first prefill node , so let us go to another prefill pod \r\n"
+  - delay: 100
+    content: "\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 258
+    content: "kubectl -n demo-lws logs -f pd-diff-deepseek-r1-distill-qwen-1-5b-0-2|grep \"LMCache INFO\"\r\n"
+  - delay: 2474
+    content: "\e[32;20m\e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine instance vllm-instance \e[3m(cache_engine.py:422:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m[2025-06-06 00:19:27,787] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine with config: LMCacheEngineConfig(chunk_size=256, local_cpu=False, max_local_cpu_size=5.0, local_disk=None, max_local_disk_size=0.0, remote_url='lm://lmcache-server:8100', remote_serde='naive', save_decode_cache=False, enable_blending=False, blend_recompute_ratio=0.15, blend_min_tokens=256, enable_p2p=False, lookup_url=None, distributed_url=None, error_handling=False, enable_controller=False, lmcache_instance_id='lmcache_default_instance', enable_nixl=False, nixl_role=None, nixl_peer_host=None, nixl_peer_port=0, nixl_buffer_size=0, nixl_buffer_device=None, nixl_enable_gc=False) \e[3m(cache_engine.py:73:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m\e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Connected to remote storage at lm://lmcache-server:8100 \e[3m(remote_backend.py:52:lmcache.experimental.storage_backend.remote_backend)\e[0m\r\n\e[32;20m[2025-06-06 00:19:27,789] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Initializing usage context. \e[3m(usage_context.py:235:lmcache.usage_context)\e[0m\r\n\e[32;20m[2025-06-06 00:21:50,075] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Storing KV cache for 9 out of 9 tokens for request cmpl-cacbe658ddb84de49c30f54e0d469f43-0 \e[3m(vllm_v1_adapter.py:496:lmcache.integration.vllm.vllm_v1_adapter)\e[0m\r\n"
+  - delay: 3947
+    content: ^C
+  - delay: 118
+    content: "\r\n#\e[32m======= Above Prefiller shows Storing KV cache for 9 out of 9 tokens  \e[0m"
+  - delay: 228
+    content: "\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 239
+    content: "kubectl -n demo-lws logs -f pd-diff-deepseek-r1-distill-qwen-1-5b-0-3|grep \"LMCache INFO\"\r\n"
+  - delay: 743
+    content: "\e[32;20m\e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine instance vllm-instance \e[3m(cache_engine.py:422:lmcache.experimental.cache_engine)\e[0m\r\n"
+  - delay: 78
+    content: "\e[32;20m\e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Creating LMCacheEngine with config: LMCacheEngineConfig(chunk_size=256, local_cpu=False, max_local_cpu_size=5.0, local_disk=None, max_local_disk_size=0.0, remote_url='lm://lmcache-server:8100', remote_serde='naive', save_decode_cache=False, enable_blending=False, blend_recompute_ratio=0.15, blend_min_tokens=256, enable_p2p=False, lookup_url=None, distributed_url=None, error_handling=False, enable_controller=False, lmcache_instance_id='lmcache_default_instance', enable_nixl=False, nixl_role=None, nixl_peer_host=None, nixl_peer_port=0, nixl_buffer_size=0, nixl_buffer_device=None, nixl_enable_gc=False) \e[3m(cache_engine.py:73:lmcache.experimental.cache_engine)\e[0m\r\n\e[32;20m[2025-06-06 00:19:29,675] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Connected to remote storage at lm://lmcache-server:8100 \e[3m(remote_backend.py:52:lmcache.experimental.storage_backend.remote_backend)\e[0m\r\n\e[32;20m \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Initializing usage context. \e[3m(usage_context.py:235:lmcache.usage_context)\e[0m\r\n\e[32;20m[2025-06-06 00:21:50,247] \e[01;31m\e[KLMCache INFO\e[m\e[K:\e[0m Reqid: cmpl-739f2be8ce114dcdbc350f8613152516-0, Total tokens 9, LMCache hit tokens: 8, need to load: 8 \e[3m(vllm_v1_adapter.py:542:lmcache.integration.vllm.vllm_v1_adapter)\e[0m\r\n"
+  - delay: 6446
+    content: ^C
+  - delay: 118
+    content: "\r\n#\e[32m============ Above Decoder shows  LMCache hit tokens: 8, \e[0m"
+  - delay: 8
+    content: "\r\n\e[01;90m\e[K#demo peterpan$\e[m\e[K:\e[0m "
+  - delay: 1046
+    content: "Thank you ,Bye\r\n"

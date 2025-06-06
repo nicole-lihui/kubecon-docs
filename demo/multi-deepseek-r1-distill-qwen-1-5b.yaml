@@ -1,0 +1,116 @@
+apiVersion: leaderworkerset.x-k8s.io/v1
+kind: LeaderWorkerSet
+metadata:
+  name: deepseek-r1-distill-qwen-1-5b
+spec:
+  networkConfig:
+    subdomainPolicy: UniquePerReplica # Default is Shared, UniquePerReplica allows configuring independent headless service for each POD, we can define unique entry Service
+  replicas: 1
+  leaderWorkerTemplate:
+    size: 2
+    restartPolicy: RecreateGroupOnPodRestart
+    leaderTemplate:
+      metadata:
+        labels:
+          role: leader
+      spec:
+        containers:
+          - name: vllm-leader
+            image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
+            command:
+              - sh
+              - -c
+            args:
+              - |
+                bash /vllm-workspace/examples/online_serving/multi-node-serving.sh leader \
+                --ray_cluster_size=$(LWS_GROUP_SIZE); \
+                python3 -m vllm.entrypoints.openai.api_server --port 8000 \
+                --model /data/serving-model \
+                --served-model-name  deepseek-r1-distill-qwen-1-5b \
+                --tensor-parallel-size 2 \
+                --pipeline_parallel_size 1
+            ports:
+              - containerPort: 8000
+            readinessProbe:
+              tcpSocket:
+                port: 8000
+              initialDelaySeconds: 15
+              periodSeconds: 10
+            resources:
+              limits:
+                cpu: '4'
+                memory: 16Gi
+                nvidia.com/gpu: '1'
+              requests:
+                cpu: '2'
+                memory: 4Gi
+                nvidia.com/gpu: '1'
+            volumeMounts:
+              - mountPath: /dev/shm
+                name: dshm
+              - mountPath: /data/serving-model
+                name: model-path
+        nodeSelector:
+          zestu.io/gpu.model: NVIDIA-GeForce-RTX-4090
+        volumes:
+          - emptyDir:
+              medium: Memory
+              sizeLimit: 10Gi
+            name: dshm
+          - name: model-path
+            persistentVolumeClaim:
+              claimName: deepseek-r1-distill-qwen-1-5b
+    workerTemplate:
+      spec:
+        containers:
+          - name: vllm-worker
+            image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
+            command:
+              - sh
+              - -c
+            args:
+              - |
+                bash /vllm-workspace/examples/online_serving/multi-node-serving.sh worker \
+                --ray_address=$(LWS_LEADER_ADDRESS)
+            resources:
+              limits:
+                cpu: '4'
+                memory: 16Gi
+                nvidia.com/gpu: '1'
+              requests:
+                cpu: '2'
+                memory: 4Gi
+                nvidia.com/gpu: '1'
+            volumeMounts:
+              - mountPath: /dev/shm
+                name: dshm
+              - mountPath: /data/serving-model
+                name: model-path
+        nodeSelector:
+          zestu.io/gpu.model: NVIDIA-GeForce-RTX-4090
+        volumes:
+          - emptyDir:
+              medium: Memory
+              sizeLimit: 10Gi
+            name: dshm
+          - name: model-path
+            persistentVolumeClaim:
+              claimName: deepseek-r1-distill-qwen-1-5b
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deepseek-r1-distill-qwen-1-5b
+  namespace: demo-lws
+  labels:
+    prometheus-discovery: "true" # Enable ServiceMonitor metrics collection
+spec:
+  selector:
+    role: leader
+    leaderworkerset.sigs.k8s.io/name: deepseek-r1-distill-qwen-1-5b # Associated name for lws model
+  ports:
+    - name: vllm-service-port
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

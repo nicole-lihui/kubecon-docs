@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-benchmark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-benchmark
+  template:
+    metadata:
+      labels:
+        app: vllm-benchmark
+    spec:
+      volumes:
+          - name: model-path
+            persistentVolumeClaim:
+              claimName: deepseek-r1-distill-qwen-1-5b
+      containers:
+        - name: benchmark
+          image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
+          command: ["sleep", "infinity"]
+          volumeMounts:
+            - name: model-path
+              mountPath: /data/serving-model
+          resources:
+            requests:
+              cpu: '2'
+              memory: 8Gi
+            limits:
+              cpu: '4'
+              memory: 16Gi
+          imagePullPolicy: IfNotPresent
