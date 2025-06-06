@@ -15,7 +15,7 @@ spec:
       containers:
         - name: lmcache
           image: docker.1ms.run/lmcache/vllm-openai:2025-04-18
-          command: ["python3", "-m", "lmcache.experimental.server", "0.0.0.0", "8100"]
+          command: ["python3", "-u", "-m", "lmcache.experimental.server", "0.0.0.0", "8100"]
           ports:
             - containerPort: 8100
           resources: {}
